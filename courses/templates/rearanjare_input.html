@@ -1,3 +1,4 @@
+{% load mathfilters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,14 +26,16 @@
     <h1>Reaaranjeaza</h1>
     <div>{{exercitiu}}</div>
     <div>
-        {% for cuv in cuvinte  %}
-            <button onclick="adaugaCuvant('{{cuv}}')">{{cuv}}</button>
-        {% endfor %}
+       
     </div>
 
     <form action="" method="post">
         {% csrf_token %}
-        <input id="solution" type="text" value='' name='solution'>
+        
+        {% for cuv in cuvinte  %}
+            <input type="text" value='' style='width:{{cuv|length|div:2}}rem;'
+            maxlength='{{cuv|length}}' name="solution_part{{forloop.counter0}}">
+        {% endfor %}
         
         <input type="submit" value="Verifica">
     </form>
