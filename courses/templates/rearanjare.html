@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style> 
+        #solution{
+            width: 60vw;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reaaranjeaza</h1>
+    <div>{{exercitiu}}</div>
+    <div>
+        {% for cuv in cuvinte  %}
+            <button onclick="adaugaCuvant('{{cuv}}')">{{cuv}}</button>
+        {% endfor %}
+    </div>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        <input id="solution" type="text" value='' name='solution'>
+        
+        <input type="submit" value="Verifica">
+    </form>
+    <script>
+        var input = document.getElementById("solution")
+        function adaugaCuvant(cuvant){
+            if (input.value != ""){
+                input.value += (" " + cuvant)
+            }else{
+                input.value +=  cuvant
+            }
+
+        }
+    </script>
+
+
+</body>
+</html>
