@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+            <title>Potriveste</title>
+
+            <style>
+                .flex {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+                .src  {
+                    color: blue; 
+                    border: 5px solid black;
+                    width: fit-content;
+                    padding: 10px;
+                    height: 50px;
+                }
+                .dest {
+                    border: 5px solid blue;
+                    width: 300px;
+                    padding: 10px;
+                    min-height: 50px;
+                }
+            div {
+                margin: 0em;
+                padding: 2em;
+            }
+            p {
+                display: inline;
+            }
+            
+            /* .matching{
+             
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+            }
+  */
+            .grid{
+                display: grid;
+                grid-template-columns: 1fr 80px 1fr;
+                justify-content: end;
+            }
+            .end{
+                justify-self: end;
+            }
+            .divider{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            </style>
+    </head>
+    <body>
+        <h1>Potriveste elementele de cod <code>HTML</code></h1>
+        <div>{{code}}</div>
+        <div>{{exercitiu}}</div>
+        <div class="grid">
+                {% for key, value in exercitiu.items %}
+                
+                    {% with forloop.counter0 as index %}
+
+                        <div class="matching end"> 
+                            <p class="src" draggable="true" id="key{{ index }}" ondragstart="dragstart_handler(event);" ondragend="dragend_handler(event);">
+                                {{ key }}
+                           </p>  
+                        </div>
+                 
+                        <div class="divider">- </div>
+
+                        <div class="matching">
+                            <p class="dest" id="dest{{ index }}" ondrop="drop_handler(event);" ondragover="dragover_handler(event);">  </p>
+                            <p id="rest_cuv{{index}}">{{ value }}</p>
+                        </div>
+                       
+                   
+                    {% endwith %}
+                  
+                {% endfor %}
+       
+        </div>
+        <form action="" method="post">
+            {% csrf_token %}
+            <input id="solution" type="text" value='' name='solution' style="width: 100%;">
+            
+            <input type="submit" value="Verifica">
+        </form>
+            <script>
+                var input = document.getElementById("solution");
+                function adaugaCuvant(cuvant){
+                    if (input.value != ""){
+                        input.value += ("#" + cuvant )
+                    }else{
+                        input.value +=  cuvant
+                    }
+
+                }
+                function dragstart_handler(ev) {
+                console.log("dragStart");
+                // Change the source element's background color to signify drag has started
+                ev.currentTarget.style.border = "dashed";
+                // Add the id of the drag source element to the drag data payload so
+                // it is available when the drop event is fired
+                ev.dataTransfer.setData("text", ev.target.id);
+                // Tell the browser both copy and move are possible
+                ev.effectAllowed = "copyMove";
+                }
+                function dragover_handler(ev) {
+                console.log("dragOver");
+                // Change the target element's border to signify a drag over event
+                // has occurred
+                ev.currentTarget.style.background = "lightblue";
+                ev.preventDefault();
+                }
+                
+                function drop_handler(ev) {
+                console.log("Drop");
+                ev.preventDefault();
+                // Get the id of drag source element (that was added to the drag data
+                var id = ev.dataTransfer.getData("text");
+                var draggedElement = document.getElementById(id);
+                var draggedText = draggedElement.textContent || draggedElement.innerText;
+                adaugaCuvant(draggedText.trim());
+                // payload by the dragstart event handler)
+                
+                var id_short = ev.target.id.substring(4);
+                var restElement = document.getElementById("rest_cuv" + id_short);
+                var restText = restElement.textContent || restElement.innerText;
+                adaugaCuvant(restText.trim());
+                var nodeCopy = document.getElementById(id).cloneNode(true);
+                nodeCopy.id = "newId";
+                
+                ev.target.appendChild(nodeCopy);
+                    
+                }
+                function dragend_handler(ev) {
+                console.log("dragEnd");
+                // Restore source's border
+                ev.target.style.border = "solid black";
+                }
+            </script>
+
+
+
+    </body>
+
+</html>

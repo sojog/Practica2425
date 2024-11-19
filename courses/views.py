@@ -2,13 +2,46 @@ from django.shortcuts import render
 from .models import Question, Answer
 # Create your views here.
 from django.http import HttpResponse
-from .rearanjeaza import rearanjeaza
+from .rearanjeaza import rearanjeaza, rearanjeaza_in_dict
 
 def home_view(request):
     context = {
 
     }
     return render(request, "home.html", context)
+
+
+def potrivire_view(request):
+    cod = ["""<a href =# "default.html"> Visit our HTML tutorial. </a>""","""<a href = "default.html"># Visit our HTML tutorial. </a>""","""<a href = "default.html"> Visit our HTML tutorial. #</a>"""]
+    code_l=""
+    for line_s in cod:
+        print(line_s)
+        code_l += line_s + "#"
+    code_l = code_l.replace(" ", "")
+    code_l = code_l[:-1]
+    print("Codul este:")
+    print(code_l)
+    
+    if request.method == "POST":
+        solution = request.POST.get('solution')
+        print(solution.replace(" ", ""))
+        print("am primit")
+        
+        if code_l == solution.replace(" ", ""):
+            return HttpResponse('Ai răspuns corect')
+        else:
+            return HttpResponse('Nu ai răspuns corect')
+
+    exercitiu = rearanjeaza_in_dict(cod)
+    print(exercitiu)
+    context = {
+        'exercitiu': exercitiu,
+        'code': cod,
+        'chei':exercitiu.keys(),
+        'cuvinte':exercitiu.values()
+    }
+    return render(request, "potriveste.html", context)
+
 
 def rearange_view(request):
     cod = """<a href = "default.html"> Visit </a>"""
@@ -26,6 +59,7 @@ def rearange_view(request):
     exercitiu = rearanjeaza(cod)
     print(exercitiu)
     context = {
+        
         'exercitiu': exercitiu,
         'cuvinte':exercitiu.split()
     }
