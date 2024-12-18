@@ -1,0 +1,110 @@
+<html lang="en">
+
+<style>
+
+body, html {
+  height: 120%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f7f7f7;
+}
+
+.card-container {
+  perspective: 1000px;
+}
+
+.card {
+  width: 300px;
+  height: 200px;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.card.flipped {
+  transform: rotateY(180deg);
+}
+
+.front, .back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  background-color: white;
+}
+
+.front {
+  color: black;
+}
+
+.back {
+  color: white;
+  background-color: #333;
+  transform: rotateY(180deg);
+}
+
+</style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlashCard</title>
+<link rel="stylesheet" href="styles.css">
+<body>
+    
+  <script>
+    
+    document.querySelector('.card').addEventListener('click', function() {
+      this.classList.toggle('flipped');
+      
+    });
+
+  </script>
+  <div>
+    <button onclick="nextCard()">Next</button>
+  </div>
+      <!--<button onclick="previousCard()">Previous</button>-->
+  <script>
+    let currentIndex = -1;
+    //let cards = [["Intrebare 1", "Raspuns 1"], ["Intrebare 2", "Raspuns 2"], ["Intrebare 3", "Raspuns 3"]];
+
+    let cards = JSON.parse('{{ exercitiu|safe }}');
+        
+    //for (let i = 0; i < exercitiu.length; i++) {
+    //  cards.push(exercitiu[i]);
+    //  }
+
+    const intrebari = Object.keys(cards); // Get an array of question keys
+    const raspunsuri = Object.values(cards); // Get an array of corresponding answers
+    //console.log(intrebari);
+    //console.log(raspunsuri);
+    //console.log(cards);
+
+    function nextCard() {
+      currentIndex = (currentIndex + 1) % intrebari.length;
+      document.querySelector('.front').innerHTML = intrebari.at(currentIndex);
+      document.querySelector('.back').innerHTML = raspunsuri.at(currentIndex);
+      document.querySelector('.card').classList.remove('flipped');
+      console.log(currentIndex);
+      console.log(cards.length);
+      console.log(intrebari.at(currentIndex));
+      console.log(raspunsuri.at(currentIndex));
+    }
+  </script>
+  <div class="card-container">
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+
+      <div class="front"><p align="center"></p></div>
+      <div class="back"><p align="center"></p></div>
+      
+    </div>
+
+  </div>
+</body>
+</html>

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'courses',
     'mathfilters',
     'Dragndrop',
+    'Cristi_T',
 ]
 
 MIDDLEWARE = [
