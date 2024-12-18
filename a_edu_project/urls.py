@@ -21,5 +21,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('courses.urls'))
+    path('dragndrop/', include('Dragndrop.urls')),
+    path('', include('courses.urls')),
+   
+    
 ]

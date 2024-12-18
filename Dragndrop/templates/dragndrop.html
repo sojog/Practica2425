@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container1 {
+  text-align: center;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 400px;
+}
+
+.drag-items {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.capitala {
+  background-color: #007BFF;
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: grab;
+}
+
+.drop-zones {
+  display: flex;
+  justify-content: space-around;
+}
+
+.tara {
+  width: 45%;
+  background-color: #e0e0e0;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.drop-area {
+  margin-top: 10px;
+  height: 50px;
+  border: 2px dashed #cccccc;
+  border-radius: 5px;
+}
+
+#message {
+  margin-top: 20px;
+  font-size: 18px;
+  color: green;
+}
+</style>
+</head>
+<body>
+  <div class="container1">
+    <h1>Asociaza capitalele cu tarile potrivite</h1>
+    <div class="drag-items">
+      {% for item in capitals %}
+      <div class="capitala" draggable="true" id="{{item}}">{{item}}</div>
+      {% endfor %}
+    </div>
+
+    <div class="drop-zones">
+      {% for item in items %}
+      <div class="tara" >
+        <p>{{item.country}}</p>
+        <div class="drop-area" ></div>
+        <!-- <div class="drop-area" data-capital="{{item.city}}"></div> -->
+      </div>
+      {% endfor %}
+    </div>
+    <div id="message"></div>
+  </div>
+
+</body>
+
+<script>
+const capitals = document.querySelectorAll('.capitala');
+const dropAreas = document.querySelectorAll('.drop-area');
+const message = document.getElementById('message');
+
+capitals.forEach(capitala => {
+  capitala.addEventListener('dragstart', dragStart);
+});
+
+dropAreas.forEach(area => {
+  area.addEventListener('dragover', dragOver);
+  area.addEventListener('drop', drop);
+});
+
+function dragStart(event) {
+  event.dataTransfer.setData('text', event.target.id);
+}
+
+function dragOver(event) {
+  event.preventDefault();
+}
+
+function drop(event) {
+  event.preventDefault();
+  const draggedCapital = event.dataTransfer.getData('text');
+  console.log(event.target)
+  const targetCountry = event.target.parentNode.getElementsByTagName("p")[0].innerHTML;
+  console.log(targetCountry)
+
+  console.log("draggedCapital", draggedCapital)
+  console.log("targetCountry", targetCountry)
+
+  const xhttpr = new XMLHttpRequest();
+  const paramsObject = {
+  city: draggedCapital,
+  country: targetCountry
+};
+
+  const target = new URL(window.location.href + 'verifica');
+
+  // const target = new URL('{{verifica_url}}');
+
+  target.search = new URLSearchParams(paramsObject).toString();
+
+
+  console.log(target);
+  xhttpr.open('GET', target.href, true);
+
+  xhttpr.onload = ()=> {
+    if (xhttpr.status === 200) {
+        const response = JSON.parse(xhttpr.response);
+        // Process the response data here
+        console.log("Raspunsul primit:", response)
+        if (response===true){
+          const draggedElement = document.getElementById(draggedCapital);
+          draggedElement.style.display = 'none';
+          event.target.innerHTML = draggedElement.textContent;
+          message.textContent = 'Corect!';
+        }else {
+        message.textContent = 'Mai incearca!';
+      }
+    } 
+  };
+
+  xhttpr.send();
+
+
+}
+
+function oldDrop(event){
+  event.preventDefault();
+  const capitalId = event.dataTransfer.getData('text');
+  const targetCapital = event.target.getAttribute('data-capital');
+
+  if (capitalId === targetCapital) {
+    const draggedElement = document.getElementById(capitalId);
+    draggedElement.style.display = 'none';
+    event.target.innerHTML = draggedElement.textContent;
+    message.textContent = 'Corect!';
+  } else {
+    message.textContent = 'Mai incearca!';
+  }
+}
+
+</script>
+</html>
